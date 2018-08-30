@@ -67,7 +67,7 @@ def create_parser():
 
 
 def insert_worker(server, storage):
-
+    """Функция вставки данных в БД по конкретному серверу и хранилищу"""
     types = {'mroot': {'file': 'mRoot_%s.txt' % server, 'storage_num': 1},
              'mca': {'file': 'mCA_%s.txt' % server, 'storage_num': 2},
              'crl': {'file': 'CRL_%s.txt' % server, 'storage_num': 3}}
@@ -77,8 +77,10 @@ def insert_worker(server, storage):
     cn.connect()
 
     def insert_func(ins_rec):
+        """Функция вставки записи в БД"""
         if c_file_type == 'CERT':
-            d_insert = {'SubjKeyID': ins_rec.subj_key_id,
+            subj_key_id = ins_rec.subj_key_id if not ins_rec.subj_key_id == 'UNKNOWN' else None
+            d_insert = {'SubjKeyID': subj_key_id,
                         'Subject': ins_rec.subject,
                         'Issuer': ins_rec.issuer,
                         'Serial': ins_rec.serial,
@@ -89,7 +91,8 @@ def insert_worker(server, storage):
                         'Not valid before': ins_rec.not_valid_before,
                         'Not valid after': ins_rec.not_valid_after}
         else:
-            d_insert = {'AuthKeyID': ins_rec.auth_key_id,
+            auth_key_id = ins_rec.auth_key_id if not ins_rec.auth_key_id == 'UNKNOWN' else None
+            d_insert = {'AuthKeyID': auth_key_id,
                         'Issuer': ins_rec.issuer,
                         'ThisUpdate': ins_rec.this_update,
                         'NextUpdate': ins_rec.next_update}
